@@ -3,55 +3,54 @@ require_relative 'fares'
 class Oystercard
   include Fares
 
-  attr_reader :balance, :entry_station, :exit_station, :journeys
+  attr_reader :balance, :journeys
 
   MAX_BALANCE = 90
-
-  def initialize
-    @balance = 0
-    @entry_station = nil
-    @exit_station = nil
-    @journeys = []
-  end
 
   def top_up(amount)
     raise MaxBalanceError if over_limit?(amount)
     self.balance += amount
   end
 
-  def in_journey?
-    !!entry_station
-  end
-
   def touch_in(station)
-    raise LowBalanceError if low_balance?
-    self.entry_station = station
+    raise LowBalanceError if balance < MINIMUM_FARE
+    new_journey(:entry_station, station)
+    self.in_journey = true
   end
 
   def touch_out(station)
     deduct(MINIMUM_FARE)
-    self.exit_station = station
-    save_journey
-    self.entry_station = nil
+    in_journey? ? journeys.last.exit_station = station :
+    new_journey(:exit_station, station)
+    self.in_journey = false
   end
 
   private
 
-  attr_writer :balance, :entry_station, :exit_station
+  attr_writer :balance
+  attr_reader :journey_class
+  attr_accessor :in_journey
+
+  def initialize(journey_class = Journey)
+    @balance = 0
+    @journeys = []
+    @journey_class = journey_class
+    @in_journey = false
+  end
+
+  def in_journey?
+    in_journey
+  end
+
+  def new_journey(station_type, station)
+    journeys << journey_class.new(station_type => station)
+  end
 
   def over_limit?(amount)
     balance + amount > MAX_BALANCE
   end
 
-  def low_balance?
-    balance < MINIMUM_FARE
-  end
-
   def deduct(amount)
     self.balance -= amount
-  end
-
-  def save_journey
-    journeys << {entry_station: entry_station, exit_station: exit_station}
   end
 end

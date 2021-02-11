@@ -1,7 +1,16 @@
 describe Oystercard do
-  let(:station) { double(:station) }
+  let(:entry_station) { double(:entry_station) }
   let(:exit_station) { double(:exit_station) }
-  let(:journey) { {entry_station: station, exit_station: exit_station} }
+  let(:journey_class) { class_double(Journey, :journey_class, new: journey) }
+  let(:journey) { instance_double(Journey, :journey) }
+
+  subject { described_class.new(journey_class) }
+
+  let(:journey) do instance_double(
+    Journey, :journey,
+    entry_station: entry_station,
+    exit_station: exit_station)
+  end
 
   describe '#balance' do
     context 'when initialized' do
@@ -34,50 +43,38 @@ describe Oystercard do
     end
   end
 
-  describe '#in_journey' do
-    context 'when initialized' do
-      it { is_expected.not_to be_in_journey }
-    end
-  end
-
   describe '#touch_in' do
     context 'after touching in' do
-      before { subject.top_up(10); subject.touch_in(station) }
-      it { is_expected.to be_in_journey }
-
-      it 'saves entry station' do
-        expect(subject.entry_station).to be station
+      it 'starts a new journey' do
+        subject.top_up(10); subject.touch_in(entry_station)
+        expect(subject.journeys.last).to be journey
       end
     end
 
     context 'when balance is less than minimum fare' do
       it 'raises error' do
-        expect { subject.touch_in(station) }.to raise_error LowBalanceError
+        expect {
+          subject.touch_in(entry_station)
+        }.to raise_error LowBalanceError
       end
     end
   end
 
   describe '#touch_out' do
     context 'after touching in then touching out' do
-      before {
-        subject.top_up(10)
-        subject.touch_in(station)
-        subject.touch_out(exit_station)
-      }
-      it { is_expected.not_to be_in_journey }
-
       it 'deducts minimum fare from balance' do
+        subject.top_up(10)
+        subject.touch_in(entry_station)
+
         expect{ subject.touch_out(exit_station) }.to change {
           subject.balance
         }.by(-described_class::MINIMUM_FARE)
       end
+    end
 
-      it 'resets entry station to nil' do
-        expect(subject.entry_station).to be_nil
-      end
-
-      it 'saves exit station' do
-        expect(subject.exit_station).to be exit_station
+    context 'when traveller forgot to touch in' do
+      it 'creates a new journey with no entry station' do
+        expect(subject.journeys.last).to be journey
       end
     end
   end
@@ -92,9 +89,10 @@ describe Oystercard do
     context 'after 1 journey' do
       before {
         subject.top_up(10)
-        subject.touch_in(station)
+        subject.touch_in(entry_station)
         subject.touch_out(exit_station)
       }
+
       it 'stores the journey' do
         expect(subject.journeys).to_not be_empty
       end

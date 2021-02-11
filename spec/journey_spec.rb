@@ -1,7 +1,9 @@
 describe Journey do
   let(:entry_station) { instance_double(Station, name: :brixton, zone: 2) }
   let(:exit_station) { instance_double(Station, name: :soho, zone: 1) }
-  subject { described_class.new(
+
+  subject {
+    described_class.new(
     entry_station: entry_station,
     exit_station: exit_station)
   }
