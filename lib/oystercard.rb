@@ -1,8 +1,11 @@
+require_relative 'fares'
+
 class Oystercard
+  include Fares
+
   attr_reader :balance, :entry_station, :exit_station, :journeys
 
   MAX_BALANCE = 90
-  MINIMUM_FARE = 1
 
   def initialize
     @balance = 0
