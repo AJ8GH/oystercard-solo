@@ -14,6 +14,13 @@ describe Oystercard do
       end
     end
 
+    context 'when topping up 15' do
+      it 'adds 15 to balance' do
+        subject.top_up(15)
+        expect(subject.balance).to be 15
+      end
+    end
+
     context 'when balance goes over limit' do
       it 'raises error' do
         expect {
@@ -31,15 +38,29 @@ describe Oystercard do
 
   describe '#touch_in' do
     context 'after touching in' do
-      before { subject.touch_in }
+      before { subject.top_up(10); subject.touch_in }
       it { is_expected.to be_in_journey }
+    end
+
+    context 'when balance is less than minimum fare' do
+      it 'raises error' do
+        expect { subject.touch_in }.to raise_error LowBalanceError
+      end
     end
   end
 
   describe '#touch_out' do
     context 'after touching in then touching out' do
-      before { subject.touch_in; subject.touch_out }
+      before {
+        subject.top_up(10)
+        subject.touch_in
+        subject.touch_out
+      }
       it { is_expected.not_to be_in_journey }
+
+      it 'deducts minimum fare from balance' do
+        expect(subject.balance).to be(10 - described_class::MINIMUM_FARE)
+      end
     end
   end
 
