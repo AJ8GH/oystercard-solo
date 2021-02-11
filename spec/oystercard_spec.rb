@@ -1,5 +1,8 @@
 describe Oystercard do
   let(:station) { double(:station) }
+  let(:exit_station) { double(:exit_station) }
+  let(:journey) { {entry_station: station, exit_station: exit_station} }
+
   describe '#balance' do
     context 'when initialized' do
       subject { described_class.new.balance }
@@ -59,26 +62,45 @@ describe Oystercard do
       before {
         subject.top_up(10)
         subject.touch_in(station)
-        subject.touch_out
+        subject.touch_out(exit_station)
       }
       it { is_expected.not_to be_in_journey }
 
       it 'deducts minimum fare from balance' do
-        expect{ subject.touch_out }.to change {
+        expect{ subject.touch_out(exit_station) }.to change {
           subject.balance
         }.by(-described_class::MINIMUM_FARE)
+      end
+
+      it 'resets entry station to nil' do
+        expect(subject.entry_station).to be_nil
+      end
+
+      it 'saves exit station' do
+        expect(subject.exit_station).to be exit_station
       end
     end
   end
 
-  # private
-  describe '#deduct' do
-    before { subject.top_up(1) }
+  describe '#journeys' do
+    context 'when initialized' do
+      it 'is empty' do
+        expect(subject.journeys).to be_empty
+      end
+    end
 
-    context 'when deducting 1' do
-      it 'removes 1 from balance' do
-        subject.send(:deduct, 1)
-        expect(subject.balance).to be_zero
+    context 'after 1 journey' do
+      before {
+        subject.top_up(10)
+        subject.touch_in(station)
+        subject.touch_out(exit_station)
+      }
+      it 'stores the journey' do
+        expect(subject.journeys).to_not be_empty
+      end
+
+      it 'stores the correct journey' do
+        expect(subject.journeys).to include(journey)
       end
     end
   end
