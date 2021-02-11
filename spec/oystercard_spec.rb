@@ -1,4 +1,5 @@
 describe Oystercard do
+  let(:station) { double(:station) }
   describe '#balance' do
     context 'when initialized' do
       subject { described_class.new.balance }
@@ -38,13 +39,17 @@ describe Oystercard do
 
   describe '#touch_in' do
     context 'after touching in' do
-      before { subject.top_up(10); subject.touch_in }
+      before { subject.top_up(10); subject.touch_in(station) }
       it { is_expected.to be_in_journey }
+
+      it 'saves entry station' do
+        expect(subject.entry_station).to be station
+      end
     end
 
     context 'when balance is less than minimum fare' do
       it 'raises error' do
-        expect { subject.touch_in }.to raise_error LowBalanceError
+        expect { subject.touch_in(station) }.to raise_error LowBalanceError
       end
     end
   end
@@ -53,7 +58,7 @@ describe Oystercard do
     context 'after touching in then touching out' do
       before {
         subject.top_up(10)
-        subject.touch_in
+        subject.touch_in(station)
         subject.touch_out
       }
       it { is_expected.not_to be_in_journey }
