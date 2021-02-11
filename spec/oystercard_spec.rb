@@ -59,7 +59,9 @@ describe Oystercard do
       it { is_expected.not_to be_in_journey }
 
       it 'deducts minimum fare from balance' do
-        expect(subject.balance).to be(10 - described_class::MINIMUM_FARE)
+        expect{ subject.touch_out }.to change {
+          subject.balance
+        }.by(-described_class::MINIMUM_FARE)
       end
     end
   end
