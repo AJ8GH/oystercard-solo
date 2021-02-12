@@ -21,6 +21,7 @@ class Oystercard
   def touch_out(station)
     journeys.last.exit_station = station
     deduct(MINIMUM_FARE)
+    self.in_journey = false
   end
 
   private
