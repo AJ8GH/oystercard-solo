@@ -62,10 +62,11 @@ describe Oystercard do
   end
 
   describe '#touch_out' do
-    context 'after touching in then touching out' do
-      before { subject.top_up(10); subject.touch_in(entry_station) }
+    before { subject.top_up(10) }
 
+    context 'after touching in then touching out' do
       it 'deducts minimum fare from balance' do
+        subject.touch_in(entry_station)
         expect{ subject.touch_out(exit_station) }.to change {
           subject.balance
         }.by(-described_class::MINIMUM_FARE)
@@ -73,8 +74,10 @@ describe Oystercard do
     end
 
     context 'when traveller forgot to touch in' do
-      xit 'creates a new journey with no entry station' do
-        expect(subject.journeys.last).to be journey
+      it 'adds a new journey to journeys' do
+        expect {
+          subject.touch_out(exit_station)
+        }.to change { subject.journeys.count }.by 1
       end
     end
   end

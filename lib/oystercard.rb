@@ -15,39 +15,34 @@ class Oystercard
   def touch_in(station)
     raise LowBalanceError if balance < MINIMUM_FARE
     start_journey(station)
-    self.in_journey = true
   end
 
   def touch_out(station)
-    journeys.last.exit_station = station
+    unexpected_touch_out(station) unless current_journey
+    journeys.last.exit_station = station if current_journey
     deduct(MINIMUM_FARE)
-    self.in_journey = false
   end
 
   private
 
   attr_writer :balance
   attr_reader :journey_class
-  attr_accessor :in_journey
+  attr_accessor :current_journey
 
   def initialize(journey_class = Journey)
     @balance = 0
     @journeys = []
     @journey_class = journey_class
-    @in_journey = false
-  end
-
-  def in_journey?
-    in_journey
+    @current_journey = nil
   end
 
   def start_journey(station)
-    journeys << journey_class.new(entry_station: station)
+    journeys << current_journey = journey_class.new(entry_station: station)
   end
 
-  # def unexpected_touch_out(station)
-  #   journeys << journey_class.new(exit_station: station)
-  # end
+  def unexpected_touch_out(station)
+    journeys << journey_class.new(exit_station: station)
+  end
 
   def over_limit?(amount)
     balance + amount > MAX_BALANCE
