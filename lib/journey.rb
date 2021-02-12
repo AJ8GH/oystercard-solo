@@ -3,7 +3,8 @@ require_relative 'fares'
 class Journey
   include Fares
 
-  attr_reader :entry_station, :exit_station
+  attr_reader :entry_station
+  attr_accessor :exit_station
 
   def initialize(args = {})
     @entry_station = args[:entry_station]

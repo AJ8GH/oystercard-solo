@@ -2,14 +2,15 @@ describe Oystercard do
   let(:entry_station) { double(:entry_station) }
   let(:exit_station) { double(:exit_station) }
   let(:journey_class) { class_double(Journey, :journey_class, new: journey) }
-  let(:journey) { instance_double(Journey, :journey, :exit_station= => nil) }
 
   subject { described_class.new(journey_class) }
 
   let(:journey) do instance_double(
     Journey, :journey,
     entry_station: entry_station,
-    exit_station: exit_station)
+    exit_station: exit_station,
+    :exit_station= => exit_station
+  )
   end
 
   describe '#balance' do
@@ -62,7 +63,7 @@ describe Oystercard do
 
   describe '#touch_out' do
     context 'after touching in then touching out' do
-      xit 'deducts minimum fare from balance' do
+      it 'deducts minimum fare from balance' do
         subject.top_up(10)
         subject.touch_in(entry_station)
 
