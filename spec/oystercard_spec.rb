@@ -63,10 +63,9 @@ describe Oystercard do
 
   describe '#touch_out' do
     context 'after touching in then touching out' do
-      it 'deducts minimum fare from balance' do
-        subject.top_up(10)
-        subject.touch_in(entry_station)
+      before { subject.top_up(10); subject.touch_in(entry_station) }
 
+      it 'deducts minimum fare from balance' do
         expect{ subject.touch_out(exit_station) }.to change {
           subject.balance
         }.by(-described_class::MINIMUM_FARE)
@@ -94,11 +93,11 @@ describe Oystercard do
         subject.touch_out(exit_station)
       }
 
-      xit 'stores the journey' do
+      it 'stores the journey' do
         expect(subject.journeys).to_not be_empty
       end
 
-      xit 'stores the correct journey' do
+      it 'stores the correct journey' do
         expect(subject.journeys).to include(journey)
       end
     end
