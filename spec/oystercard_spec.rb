@@ -1,15 +1,29 @@
 describe Oystercard do
   let(:entry_station) { double(:entry_station) }
   let(:exit_station) { double(:exit_station) }
-  let(:journey_class) { class_double(Journey, :journey_class, new: journey) }
-
   subject { described_class.new(journey_class) }
 
-  let(:journey) do instance_double(
-    Journey, :journey,
+  let(:journey_class) do class_double(
+    Journey, :journey_class,
+    start_journey: new_journey,
+    new_incomplete: new_journey
+    )
+  end
+
+  let(:new_journey) do instance_double(
+    Journey, :new_journey,
+    entry_station: entry_station,
+    exit_station: nil,
+    end_journey: complete_journey,
+    fare: 6
+  )
+  end
+
+  let(:complete_journey) do instance_double(
+    Journey, :complete_journey,
     entry_station: entry_station,
     exit_station: exit_station,
-    :exit_station= => exit_station
+    fare: 1
   )
   end
 
@@ -45,17 +59,28 @@ describe Oystercard do
   end
 
   describe '#touch_in' do
-    context 'after touching in' do
-      it 'starts a new journey' do
-        subject.top_up(10); subject.touch_in(entry_station)
-        expect(subject.journeys.last).to be journey
+    context 'when balance is topped up' do
+      before { subject.top_up(10) }
+
+      # context 'after touching in' do
+      #   xit 'starts a new journey' do
+      #     subject.touch_in(entry_station)
+      #     expect(subject.current_journey).to be journey
+      #   end
+      # end
+
+      context 'when traveller forgot to touch out' do
+        it 'adds previous journey to journeys' do
+          2.times { subject.touch_in(entry_station) }
+          expect(subject.journeys).to include(new_journey)
+        end
       end
     end
 
-    context 'when balance is less than minimum fare' do
+    context 'when balance is low' do
       it 'raises error' do
         expect {
-          subject.touch_in(entry_station)
+        subject.touch_in(entry_station)
         }.to raise_error LowBalanceError
       end
     end
@@ -101,7 +126,7 @@ describe Oystercard do
       end
 
       it 'stores the correct journey' do
-        expect(subject.journeys).to include(journey)
+        expect(subject.journeys).to include(complete_journey)
       end
     end
   end

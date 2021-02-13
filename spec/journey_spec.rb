@@ -40,10 +40,32 @@ describe Journey do
     end
   end
 
-  describe '#exit_station' do
-    it 'can be update on touch out' do
-      subject.exit_station = exit_station
+  describe '#end_journey' do
+    subject { described_class.new(entry_station: entry_station) }
+
+    it 'updates exit station' do
+      subject.end_journey(exit_station)
       expect(subject.exit_station).to be exit_station
+    end
+  end
+
+  describe '#start_journey' do
+    subject { described_class.start_journey(entry_station) }
+
+    it 'creates a journey with an entry_station' do
+      expect(subject.entry_station).to be entry_station
+    end
+
+    it 'creates a journey with no exit_station' do
+      expect(subject.exit_station).to be_nil
+    end
+  end
+
+  describe '#new_incomplete' do
+    subject { described_class.new_incomplete(exit_station) }
+
+    it 'creates a new journey with no entry station' do
+      expect(subject.entry_station).to be nil
     end
   end
 end
