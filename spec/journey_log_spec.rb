@@ -42,12 +42,12 @@ describe JourneyLog do
       end
     end
 
-    context 'after forgetting to touch in' do
-      xit 'creates a new incomplete journey' do
-        expect {
-          subject.finish(entry_station)
-        }.to change { subject.history }.by 1
-      end
-    end
+    # context 'after forgetting to touch in' do
+    #   xit 'creates a new incomplete journey' do
+    #     expect {
+    #       subject.finish(entry_station)
+    #     }.to change { subject.history }.by 1
+    #   end
+    # end
   end
 end
