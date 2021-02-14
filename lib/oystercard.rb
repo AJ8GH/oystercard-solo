@@ -1,11 +1,8 @@
-require_relative 'fares'
-
 class Oystercard
-  include Fares
+  MINIMUM_FARE = 1
+  MAX_BALANCE = 90
 
   attr_reader :balance, :journeys
-
-  MAX_BALANCE = 90
 
   def top_up(amount)
     raise MaxBalanceError if over_limit?(amount)

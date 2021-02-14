@@ -3,17 +3,20 @@ describe JourneyLog do
   let(:entry_station) { instance_double(Station, :entry_station, name: :brixton, zone: 2) }
   let(:exit_station) { instance_double(Station, :entry_station, name: :soho, zone: 1) }
 
-  let(:new_journey) {
-    instance_double(
+  let(:new_journey) do instance_double(
       Journey, :journey,
       entry_station: entry_station,
       exit_station: exit_station,
       :exit_station= => exit_station
-    ) }
+    )
+  end
 
-  let(:complete_journey) {
-    instance_double(Journey, :journey, entry_station: entry_station, exit_station: exit_station)
-  }
+  let(:complete_journey) do instance_double(
+      Journey, :journey,
+      entry_station: entry_station,
+      exit_station: exit_station
+    )
+  end
 
   subject { described_class.new(journey_class) }
 
@@ -33,14 +36,17 @@ describe JourneyLog do
   describe '#finish' do
     context 'after touch in and touch out' do
       it 'adds exit station to current journey' do
-        subject.start(entry_station); subject.finish(exit_station)
+        subject.start(entry_station)
+        subject.finish(exit_station)
         expect(subject.journeys.last.exit_station).to be exit_station
       end
     end
 
     context 'after forgetting to touch in' do
       xit 'creates a new incomplete journey' do
-        expect(subject)
+        expect {
+          subject.finish(entry_station)
+        }.to change { subject.history }.by 1
       end
     end
   end

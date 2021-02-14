@@ -1,7 +1,8 @@
 describe Oystercard do
   let(:entry_station) { double(:entry_station) }
-  let(:exit_station) { double(:exit_station) }
-  subject { described_class.new(journey_log) }
+  let(:exit_station)  { double(:exit_station) }
+  let(:empty_log)     { instance_double(JourneyLog, history: []) }
+  subject             { described_class.new(journey_log) }
 
   let(:journey_log) do instance_double(
     JourneyLog, :journey_log,
@@ -28,6 +29,15 @@ describe Oystercard do
     fare: 1
   )
   end
+
+  let(:incomplete_journey) do instance_double(
+    Journey, :incomplete_journey,
+    entry_station: nil,
+    exit_station: exit_station,
+    fare: 6
+  )
+  end
+
 
   describe '#balance' do
     context 'when initialized' do
@@ -63,9 +73,8 @@ describe Oystercard do
   describe '#touch_in' do
     context 'when balance is topped up' do
       before { subject.top_up(10) }
-      xit 'starts a new journey' do
-        subject.touch_in(entry_station)
-        expect(subject.journey_log.current_journey).to be new_journey
+      it 'raises no error' do
+        expect { subject.touch_in(entry_station) }.not_to raise_error
       end
     end
 
@@ -81,8 +90,8 @@ describe Oystercard do
   describe '#touch_out' do
     before { subject.top_up(10) }
 
-    context 'after touching in then touching out' do
-      it 'deducts minimum fare from balance' do
+    context 'when complete journey' do
+      it 'deducts correct fare from balance' do
         subject.touch_in(entry_station)
         expect{ subject.touch_out(exit_station) }.to change {
           subject.balance
@@ -90,18 +99,21 @@ describe Oystercard do
       end
     end
 
-    context 'when traveller forgot to touch in' do
-      xit 'adds a new journey to journeys' do
+    context 'when incomplete journey' do
+      it 'deducts penalty fare' do
+        allow(journey_log).to receive(:history) { [incomplete_journey] }
         expect {
           subject.touch_out(exit_station)
-        }.to change { subject.journeys.count }.by 1
+        }.to change { subject.balance }.by -Journey::PENALTY_FARE
       end
     end
   end
 
   describe '#journeys' do
     context 'when initialized' do
-      xit 'is empty' do
+      subject { described_class.new(empty_log) }
+
+      it 'is empty' do
         expect(subject.journeys).to be_empty
       end
     end

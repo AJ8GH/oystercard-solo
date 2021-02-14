@@ -27,15 +27,31 @@ describe Journey do
 
   describe '#fare' do
     context 'when complete' do
-      it 'charges minimum fare' do
-        expect(subject.fare).to be(Fares::MINIMUM_FARE)
+      it 'charges the correct fare for a 0 zone trip' do
+        allow(entry_station).to receive(:zone) { 1 }
+        expect(subject.fare).to be(Oystercard::MINIMUM_FARE)
+      end
+
+      it 'charges the correct fare for a 1 zone trip' do
+        expect(subject.fare).to be(Oystercard::MINIMUM_FARE + 1)
+      end
+
+      it 'charges the correct fare for a 2 zone trip' do
+        allow(entry_station).to receive(:zone) { 3 }
+        expect(subject.fare).to be(Oystercard::MINIMUM_FARE + 2)
+      end
+
+      it 'charges the correct fare for a 6 zone trip' do
+        allow(entry_station).to receive(:zone) { 8 }
+        allow(exit_station).to receive(:zone) { 2 }
+        expect(subject.fare).to be(Oystercard::MINIMUM_FARE + 6)
       end
     end
 
     context 'when incomplete' do
       subject { described_class.new(entry_station: entry_station) }
       it 'charges penalty fare' do
-        expect(subject.fare).to be(Fares::PENALTY_FARE)
+        expect(subject.fare).to be(described_class::PENALTY_FARE)
       end
     end
   end

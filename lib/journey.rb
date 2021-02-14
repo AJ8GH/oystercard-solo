@@ -1,7 +1,5 @@
-require_relative 'fares'
-
 class Journey
-  include Fares
+  PENALTY_FARE = 6
 
   attr_reader :entry_station
   attr_accessor :exit_station
@@ -16,7 +14,8 @@ class Journey
   end
 
   def fare
-    complete? ? MINIMUM_FARE : PENALTY_FARE
+    return PENALTY_FARE unless complete?
+    Oystercard::MINIMUM_FARE + (entry_station.zone - exit_station.zone).abs
   end
 
   def end_journey(station = nil)
