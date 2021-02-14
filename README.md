@@ -1,6 +1,6 @@
 # Oystercard Challenge
 
-[![Coverage Status](https://coveralls.io/repos/github/AJ8GH/oystercard-solo/badge.svg)](https://coveralls.io/github/AJ8GH/oystercard-solo) [![Maintainability](https://api.codeclimate.com/v1/badges/2db4bbc21808878bc42d/maintainability)](https://codeclimate.com/github/AJ8GH/oystercard-solo/maintainability)
+[![Build Status](https://travis-ci.com/AJ8GH/oystercard-solo.svg?branch=main)](https://travis-ci.com/AJ8GH/oystercard-solo) [![Coverage Status](https://coveralls.io/repos/github/AJ8GH/oystercard-solo/badge.svg)](https://coveralls.io/github/AJ8GH/oystercard-solo) [![Maintainability](https://api.codeclimate.com/v1/badges/2db4bbc21808878bc42d/maintainability)](https://codeclimate.com/github/AJ8GH/oystercard-solo/maintainability)
 
 ![Oystercard](https://designandbuilduk.net/wp-content/uploads/2018/07/611.jpg)
 
