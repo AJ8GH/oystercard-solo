@@ -1,7 +1,7 @@
 class JourneyLog
-  attr_reader :current_journey
+  attr_reader :current_journey, :history
 
-  def start(station)
+  def start(station = nil)
     self.current_journey = journey_class.new(entry_station: station)
   end
 
@@ -9,7 +9,7 @@ class JourneyLog
     history.dup
   end
 
-  def finish(station)
+  def finish(station = nil)
     current_journey.exit_station = station
     history << current_journey
     self.current_journey = nil
@@ -17,7 +17,7 @@ class JourneyLog
 
   private
 
-  attr_reader :journey_class, :history
+  attr_reader :journey_class
   attr_writer :current_journey
 
   def initialize(journey_class = Journey)

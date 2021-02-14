@@ -14,38 +14,45 @@ class Oystercard
 
   def touch_in(station)
     raise LowBalanceError if balance < MINIMUM_FARE
-    finish_current_journey if current_journey
-    self.current_journey = journey_class.start_journey(station)
+    unexpected_touch_in
+    journey_log.start(station)
   end
 
   def touch_out(station)
-    journeys << current_journey.end_journey(station) if current_journey
-    unexpected_touch_out(station) unless current_journey
-    self.current_journey = nil
+    fail if unexpected_touch_out(station)
+    journey_log.finish(station)
     deduct
+  end
+
+  def journeys
+    journey_log.history.dup
   end
 
   private
 
   attr_writer :balance
   attr_reader :journey_class
-  attr_accessor :current_journey
+  attr_accessor :journey_log
 
-  def initialize(journey_class = Journey)
+  def initialize(journey_log = JourneyLog.new)
     @balance = 0
-    @journeys = []
+    @journey_log = journey_log
     @journey_class = journey_class
-    @current_journey = nil
+  end
+
+  def unexpected_touch_in
+    if journey_log.current_journey
+      journey_log.finish
+      deduct
+    end
   end
 
   def unexpected_touch_out(station)
-    journeys << journey_class.new_incomplete(station)
-    self.current_journey = nil
-  end
-
-  def finish_current_journey
-    journeys << current_journey
-    deduct
+    unless journey_log.current_journey
+      journey_log.start
+      journey_log.finish(station)
+      deduct
+    end
   end
 
   def over_limit?(amount)
@@ -53,6 +60,6 @@ class Oystercard
   end
 
   def deduct
-    self.balance -= journeys.last.fare
+    self.balance -= journey_log.history.last.fare
   end
 end
