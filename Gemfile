@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-ruby '3.0.0'
+ruby '2.7.0'
 
 group :test, :development do
   gem 'rspec'
@@ -8,6 +8,7 @@ group :test, :development do
 end
 
 group :test do
-  gem 'simplecov', require: false
-  gem 'simplecov-console', require: false
+  # gem 'simplecov', require: false
+  # gem 'simplecov-console', require: false
+  gem 'coveralls', require: false
 end

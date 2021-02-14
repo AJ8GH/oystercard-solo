@@ -1,35 +1,51 @@
 # Oystercard Challenge
 
-This week's challenge will start with going back over the basics we covered last week in Boris Bikes, giving you the chance to reinforce what you learned last week. You'll then be challenged to build a more complex system which should really stretch your skills in Ruby, TDD and object-oriented design.
+[![Maintainability](https://api.codeclimate.com/v1/badges/2db4bbc21808878bc42d/maintainability)](https://codeclimate.com/github/AJ8GH/oystercard-solo/maintainability)
 
-## Reminder of this week's goals from the [Week Outlines](https://github.com/makersacademy/course/blob/master/week_outlines.md)
+![Oystercard](https://designandbuilduk.net/wp-content/uploads/2018/07/611.jpg)
 
-By the end of the week all developers can:
+A tricky exercise in extracting classes from a complex system using tests as a scaffold. The task was to build a system for TFL's Oystercard payment network
 
-* Use all of week 1's skills (don't underestimate the importance of this)
-* Break one class into two classes that work together, while maintaining test coverage
-* Unit test classes in isolation using mocking
-* Explain some basic OO principles and tie them to high level concerns (e.g. ease of change)
-* Review another person's code and give them meaningful feedback
+My implementation works, but I would like to build this program again from scratch to improve on the design further and practice the techniques again.
 
-Start attending [process workshops](https://github.com/makersacademy/skills-workshops/tree/master/process_review) to focus on your developer process. Anyone from any cohort ever can attend.
+## Technical skills
 
-Attending process workshop will help you improve your processes, which in turn makes you a better developer and more prepared for reviews and interviews.
+- TDD
+- Encapsulation
+- Extracting a class
+- SRP
+- Dependency injection
+- Dependency inversion
+- Domain Modelling
 
-### Wider course goals this week should help with (see all [course goals here](https://github.com/makersacademy/course/blob/master/goals/course_goals.md)):
+## Dependencies
 
-<dl>
-  <dt>I write code that is easy to change</dt>
-  <dd>Writing easy to change software is highly prized amongst developers and employers. By developers because most of a developer's time is spent changing software. By employers because their teams can deliver value to customers faster.</dd>
-  <dt>I can test-drive my code</dt>
-  <dd>Tested software is easier to change because you can tell when it's broken just by running a command, even the tricky edge cases.</dd>
-  <dt>I can build with objects</dt>
-  <dd>Most code in the world is structured in small pieces called objects. This is done because it is easier to change than having everything in one place.</dd>
-</dl>
+- `rspec`
+- `rubocop`
+- `simplecov`
+- `simplecov-console`
 
-## Weekly challenge user stories
+## Getting Started
 
-Here are the user stories you will be working on for this project:
+### Clone
+
+```shell
+git clone git@github.com:AJ8GH/oystercard-solo
+```
+
+### Install dependenies
+
+```shell
+bundle
+```
+
+### run oystercard challenge script in irb
+
+```shell
+irb -r ./ib/oystercard_challenge.rb
+```
+
+## User stories
 
 ```
 In order to use public transport
@@ -80,40 +96,3 @@ In order to be charged the correct amount
 As a customer
 I need to have the correct fare calculated
 ```
-
-### Sequence & Schedule
-* [Onsite](../sequence/onsite/week02.md)
-* [Remote](../sequence/remote/week02.md)
-
-## Set up the project:
-
-  1. [Create a Gemfile](01_create_gemfile.md)
-  2. [Create RSpec conventional files](02_initialize_rspec.md)
-  3. [Review debugging basics](03_debugging.md)
-
-## Create a basic Oyster card:
-  4. [Add the balance](04_adding_balance.md)
-  5. [Enable top up functionality](05_top_up.md)
-  6. [Enforce maximum balance](06_maximum_balance.md)
-  7. [Deduct the money](07_deducting_money.md)
-
-## Add touch in/out functionality:
-  8. [Add touch in/out support](08_touch_in_out.md)
-  9. [Checking mininum balance on touch in](09_min_balance_on_touch_in.md)
-  10. [Charging for the journey](10_charge_on_touch_out.md)
-
-## Record the journeys
-  11. [Saving the entry station](11_saving_entry_station.md)
-  12. [Adding journey history](12_journey_history.md)
-  13. [Creating the station class](13_create_station_class.md)
-
-## Refactor to extract Journey class
-  14. [Handling a journey without a touch out](14_no_touch_in_or_out.md)
-
-## Refactoring: get the code into shape
-  15. [Extracting the journey log out of the Oystercard](15_extracting_journey_log.md)
-
-## Make fares depends on zones
-  16. [Calculating the fare between zones](16_fare_for_zones.md)
-
-## [Example Code](walkthroughs/example_code)
